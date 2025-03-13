@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <time.h> 
+
 
 using namespace std;
 
@@ -24,7 +26,10 @@ int main() {
 
 	random_device rd;
 	mt19937 gen(rd());
-	uniform_int_distribution<> dis(-64, 64);
+	uniform_int_distribution<> noise_prob(1, 20); 
+	uniform_int_distribution<> black_or_white(0, 1); 
+	//normal_distribution<> dis(0.0f, 32.0f);
+	//uniform_int_distribution<> dis(-64, 64);
 
 	vector<vector<unsigned char>> imgArr;
 	imgArr.resize(h, vector<unsigned char>(w));
@@ -34,9 +39,12 @@ int main() {
 		int x = i % w;
 		int y = i / w;
 		int pixel = getc(fp_r);
-		pixel += dis(gen); 
-		if (pixel < 0) pixel = 0;   
-		if (pixel > 255) pixel = 255;
+
+		if (noise_prob(gen) == 1) 
+		{
+			pixel = (black_or_white(gen) == 0) ? 0 : 255;
+		}
+
 		imgArr[x][h - y - 1] = static_cast<unsigned char>(pixel);
 	}
 
